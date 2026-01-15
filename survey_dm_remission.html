@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบประเมินความต้องการ NCDs Remission | เขตสุขภาพที่ 7</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff1f2', 
+                            100: '#ffe4e6', 
+                            200: '#fecdd3', 
+                            300: '#fda4af', 
+                            400: '#fb7185', 
+                            500: '#f43f5e', 
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239', 
+                            900: '#881337', 
+                        },
+                        gold: {
+                            400: '#d4a373', 
+                            500: '#c58f5e', 
+                            600: '#b07d4e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        heading: ['Prompt', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'pink-glow': '0 4px 20px -2px rgba(251, 113, 133, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts: Sarabun & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    
+    <style>
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background: linear-gradient(135deg, #fff1f2 0%, #fff5f7 50%, #ffe4e6 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3, .heading-font { font-family: 'Prompt', sans-serif; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 228, 230, 0.5);
+        }
+        
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .required::after { content: " *"; color: #f43f5e; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff1f2; }
+        ::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fb7185; }
+
+        .option-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover {
+            border-color: #fb7185;
+            background-color: #fff1f2;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(251, 113, 133, 0.15);
+        }
+        input:checked + .option-card {
+            border-color: #f43f5e;
+            background-color: #fff0f3;
+            box-shadow: 0 4px 12px -2px rgba(244, 63, 94, 0.25);
+        }
+        input:checked + .option-card .check-circle {
+            background-color: #f43f5e;
+            border-color: #f43f5e;
+        }
+        input:checked + .option-card .check-circle::after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .likert-btn-wrapper:hover .likert-btn {
+            border-color: #fb7185;
+            background-color: #fff1f2;
+            color: #be123c;
+        }
+        input:checked + .likert-btn {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
+            transform: scale(1.1);
+        }
+
+        .pii-warning { border: 2px solid #f43f5e !important; background-color: #fff1f2; animation: pulse 2s infinite; }
+
+        .chart-card { background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid #ffe4e6; }
+        .chart-title { font-family: 'Prompt', sans-serif; font-weight: 600; color: #881337; margin-bottom: 1rem; border-bottom: 1px solid #fff1f2; padding-bottom: 0.5rem; font-size: 1rem; }
+        
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .data-table td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid #ffe4e6;
+            color: #881337;
+        }
+        .data-table tr:hover {
+            background-color: #fff1f2;
+        }
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        .table-container {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #ffe4e6;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 241, 242, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-brand-800 antialiased selection:bg-brand-200 selection:text-brand-900">
+
+    <!-- Header -->
+    <header class="glass sticky top-0 z-40 border-b border-brand-100 shadow-sm">
+        <div class="h-1 bg-gradient-to-r from-brand-300 via-brand-500 to-brand-300"></div>
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-xl shadow-pink-glow transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                    D7
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold text-brand-900 leading-tight tracking-tight">แบบประเมิน NCDs Remission</h1>
+                    <p class="text-xs text-gold-500 font-medium tracking-wide uppercase">DPC 7 Khon Kaen</p>
+                </div>
+            </div>
+            <button onclick="toggleDashboard()" class="hidden md:flex items-center gap-2 text-sm font-medium bg-white text-brand-700 px-5 py-2 rounded-full border border-brand-200 hover:bg-brand-50 hover:text-brand-900 transition-all shadow-sm hover:shadow-md group">
+                <span class="group-hover:scale-110 transition-transform text-xl">📊</span>
+                <span>Dashboard</span>
+            </button>
+        </div>
+        <div class="w-full bg-brand-50 h-1.5 overflow-hidden">
+            <div id="progressBar" class="bg-gradient-to-r from-brand-400 to-brand-600 h-1.5 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(244,63,94,0.5)]" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-10 mb-20">
+        
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-md z-50 hidden flex items-center justify-center flex-col">
+            <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full mx-4 border border-brand-100">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-brand-100 border-t-brand-500 mx-auto mb-4"></div>
+                <h3 class="text-lg font-bold text-brand-900">กำลังบันทึกข้อมูล...</h3>
+                <p class="text-brand-400 text-sm mt-2">กรุณารอสักครู่ ระบบกำลังประมวลผล</p>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT FORM CARD -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-[2rem] shadow-pink-glow border border-white/50 overflow-hidden relative">
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-brand-200/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/2 -left-24 w-64 h-64 bg-gold-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <form id="assessmentForm" onsubmit="event.preventDefault();" class="relative z-10">
+                
+                <!-- Section 0: Intro & Consent -->
+                <div id="step0" class="step-content active p-8 md:p-12">
+                    <div class="text-center mb-10">
+                        <span class="inline-block px-4 py-1.5 bg-brand-50 text-brand-600 rounded-full text-xs font-bold mb-4 tracking-wider shadow-sm uppercase">Survey 2024</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-brand-900 mb-4 tracking-tight">คำชี้แจงแบบประเมิน</h2>
+                        <div class="h-1.5 w-24 bg-gradient-to-r from-brand-300 to-brand-500 mx-auto rounded-full opacity-80"></div>
+                    </div>
+                    
+                    <p class="mb-8 leading-relaxed text-brand-700 text-center max-w-2xl mx-auto text-lg">
+                        แบบประเมินนี้จัดทำขึ้นเพื่อสำรวจสถานการณ์ ความพร้อม และความต้องการสนับสนุนในการดำเนินงาน <span class="text-brand-600 font-bold bg-brand-50 px-1 rounded">NCDs Remission (DM Remission)</span> ของหน่วยงานในเขตสุขภาพที่ 7
+                    </p>
+
+                    <div class="bg-white/60 border border-brand-100 rounded-2xl p-6 mb-10 relative overflow-hidden group shadow-sm">
+                        <div class="absolute top-0 left-0 w-1.5 h-full bg-brand-400"></div>
+                        <h3 class="font-bold text-brand-900 mb-3 flex items-center gap-2 text-lg">
+                            <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            การคุ้มครองข้อมูลส่วนบุคคล (PDPA)
+                        </h3>
+                        <ul class="text-sm space-y-3 text-brand-700 ml-2">
+                            <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-2 shrink-0"></span>เก็บข้อมูลเพื่อการวิเคราะห์และวางแผนเท่านั้น</li>
+                            <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-2 shrink-0"></span>ไม่มีการระบุตัวตนรายบุคคลในรายงานสรุป</li>
+                            <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand-400 mt-2 shrink-0"></span>เก็บรักษาข้อมูลอย่างปลอดภัยตามมาตรฐาน</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t border-brand-100 pt-8">
+                        <label class="block font-bold mb-6 text-xl text-brand-900 text-center required">การให้ความยินยอม</label>
+                        <div class="grid md:grid-cols-2 gap-5 max-w-2xl mx-auto">
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="consent" value="agree" class="peer sr-only" onchange="checkConsent(this.value)">
+                                <div class="option-card p-6 rounded-2xl border border-brand-200 bg-white h-full flex items-center gap-4 transition-all hover:border-brand-400">
+                                    <div class="check-circle w-7 h-7 rounded-full border-2 border-brand-200 flex items-center justify-center shrink-0 transition-all bg-brand-50 text-brand-600"></div>
+                                    <div>
+                                        <span class="block font-bold text-lg text-brand-900">ยินยอม</span>
+                                        <span class="text-sm text-brand-500">ให้ข้อมูลเพื่อการวิเคราะห์</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="consent" value="disagree" class="peer sr-only" onchange="checkConsent(this.value)">
+                                <div class="option-card p-6 rounded-2xl border border-gray-200 bg-white h-full flex items-center gap-4 transition-all">
+                                    <div class="check-circle w-7 h-7 rounded-full border-2 border-gray-200 flex items-center justify-center shrink-0 transition-all"></div>
+                                    <div>
+                                        <span class="block font-bold text-lg text-gray-600">ไม่ยินยอม</span>
+                                        <span class="text-sm text-gray-400">ยุติการทำแบบประเมิน</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 1: General Info -->
+                <div id="step1" class="step-content p-8 md:p-12">
+                    <h2 class="text-2xl font-bold mb-8 text-brand-900 flex items-center gap-3 pb-4 border-b border-brand-100">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 text-lg shadow-sm">1</span>
+                        ข้อมูลทั่วไป
+                    </h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Q1 -->
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">1. หน่วยงานที่สังกัด</label>
+                            <div class="relative">
+                                <select name="q1" class="w-full appearance-none border border-brand-200 rounded-xl p-4 pl-5 pr-10 focus:ring-2 focus:ring-brand-400 focus:border-brand-400 outline-none transition-all bg-white text-brand-900" onchange="handleSpecificInput('q1', 'q1_other')">
+                                    <option value="">-- กรุณาเลือก --</option>
+                                    <option value="สสจ.">สสจ.</option>
+                                    <option value="รพศ./รพท.">รพศ./รพท.</option>
+                                    <option value="รพช.">รพช.</option>
+                                    <option value="สสอ.">สสอ.</option>
+                                    <option value="รพ.สต.">รพ.สต.</option>
+                                    <option value="ศูนย์บริการสาธารณสุข">ศูนย์บริการสาธารณสุข</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-400">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <input type="text" name="q1_other" id="q1_other" class="mt-3 w-full border border-brand-100 rounded-xl p-3 bg-brand-50 focus:bg-white focus:ring-2 focus:ring-brand-400 outline-none transition-all text-brand-900" placeholder="ระบุหน่วยงาน" disabled>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">2. จังหวัด</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <script>
+                                    ['ร้อยเอ็ด', 'ขอนแก่น', 'มหาสารคาม', 'กาฬสินธุ์'].forEach(prov => {
+                                        document.write(`
+                                            <label class="cursor-pointer group">
+                                                <input type="radio" name="q2" value="${prov}" class="peer sr-only">
+                                                <div class="option-card p-4 rounded-xl border border-brand-200 text-center bg-white hover:bg-brand-50 transition-all h-full flex items-center justify-center">
+                                                    <span class="text-base font-medium text-brand-700 peer-checked:text-brand-900 peer-checked:font-bold">${prov}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">3. ตำแหน่ง/บทบาท</label>
+                            <div class="relative">
+                                <select name="q3" class="w-full appearance-none border border-brand-200 rounded-xl p-4 pl-5 pr-10 focus:ring-2 focus:ring-brand-400 outline-none bg-white text-brand-900" onchange="handleSpecificInput('q3', 'q3_other')">
+                                    <option value="">-- กรุณาเลือก --</option>
+                                    <option value="แพทย์">แพทย์</option>
+                                    <option value="พยาบาลวิชาชีพ (NCD Manager/Case Manager)">พยาบาลวิชาชีพ (NCD Manager/Case Manager)</option>
+                                    <option value="นักโภชนาการ/โภชนากร">นักโภชนาการ/โภชนากร</option>
+                                    <option value="นักวิชาการสาธารณสุข">นักวิชาการสาธารณสุข</option>
+                                    <option value="เจ้าพนักงานสาธารณสุข">เจ้าพนักงานสาธารณสุข</option>
+                                    <option value="เภสัชกร">เภสัชกร</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-400">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                            <input type="text" name="q3_other" id="q3_other" class="mt-3 w-full border border-brand-100 rounded-xl p-3 bg-brand-50 text-brand-900" placeholder="ระบุตำแหน่ง" disabled>
+                        </div>
+
+                        <!-- Q4 -->
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">4. ประสบการณ์งาน NCDs</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <script>
+                                    ['น้อยกว่า 1 ปี', '1 - 3 ปี', '4 - 6 ปี', '7 - 9 ปี', '10 ปีขึ้นไป'].forEach(exp => {
+                                        document.write(`
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="q4" value="${exp}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-4">
+                                                    <div class="check-circle w-5 h-5 rounded-full border border-brand-300 flex items-center justify-center shrink-0"></div>
+                                                    <span class="text-brand-700">${exp}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Situation -->
+                <div id="step2" class="step-content p-8 md:p-12">
+                    <h2 class="text-2xl font-bold mb-8 text-brand-900 flex items-center gap-3 pb-4 border-b border-brand-100">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 text-lg shadow-sm">2</span>
+                        สถานการณ์การดำเนินงาน
+                    </h2>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">5. สถานะการดำเนินงาน DM Remission</label>
+                            <div class="space-y-3">
+                                <script>
+                                    ['มีการดำเนินงานอย่างเป็นรูปธรรม', 'อยู่ระหว่างการเตรียมความพร้อม/เริ่มดำเนินการ', 'ยังไม่มีการดำเนินงาน แต่มีแผนจะดำเนินการ', 'ยังไม่มีการดำเนินงาน และยังไม่มีแผน'].forEach(opt => {
+                                        document.write(`
+                                            <label class="cursor-pointer block">
+                                                <input type="radio" name="q5" value="${opt}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-4 hover:bg-brand-50">
+                                                    <div class="check-circle w-5 h-5 rounded-full border border-brand-300 shrink-0"></div>
+                                                    <span class="text-brand-700 font-medium">${opt}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">6. ความเข้าใจในเกณฑ์/นิยาม DM Remission</label>
+                             <div class="space-y-3">
+                                <script>
+                                    ['รู้จัก และเข้าใจอย่างดี', 'พอรู้บ้าง แต่ยังไม่ชัดเจน', 'ไม่เคยได้ยินมาก่อน'].forEach(opt => {
+                                        document.write(`
+                                            <label class="cursor-pointer block">
+                                                <input type="radio" name="q6" value="${opt}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-4 hover:bg-brand-50">
+                                                    <div class="check-circle w-5 h-5 rounded-full border border-brand-300 shrink-0"></div>
+                                                    <span class="text-brand-700 font-medium">${opt}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <label class="block font-bold mb-3 text-brand-800 required text-lg">7. ผู้ป่วยเบาหวาน HbA1c < 7%</label>
+                                <div class="relative">
+                                    <select name="q7" class="w-full appearance-none border border-brand-200 rounded-xl p-4 pl-5 pr-10 bg-white text-brand-900 focus:ring-2 focus:ring-brand-400 outline-none">
+                                        <option value="">-- เลือกช่วง --</option>
+                                        <option value="น้อยกว่าร้อยละ 20">< 20%</option>
+                                        <option value="ร้อยละ 20 - 39">20% - 39%</option>
+                                        <option value="ร้อยละ 40 - 59">40% - 59%</option>
+                                        <option value="ร้อยละ 60 ขึ้นไป">> 60%</option>
+                                        <option value="ไม่ทราบข้อมูล">ไม่ทราบข้อมูล</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-400">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-3 text-brand-800 required text-lg">8. ผู้ป่วยเบาหวานที่อ้วนลงพุง</label>
+                                <div class="relative">
+                                    <select name="q8" class="w-full appearance-none border border-brand-200 rounded-xl p-4 pl-5 pr-10 bg-white text-brand-900 focus:ring-2 focus:ring-brand-400 outline-none">
+                                        <option value="">-- เลือกช่วง --</option>
+                                        <option value="น้อยกว่าร้อยละ 20">< 20%</option>
+                                        <option value="ร้อยละ 20 - 39">20% - 39%</option>
+                                        <option value="ร้อยละ 40 - 59">40% - 59%</option>
+                                        <option value="ร้อยละ 60 ขึ้นไป">> 60%</option>
+                                        <option value="ไม่ทราบข้อมูล">ไม่ทราบข้อมูล</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-400">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">9. ปัญหา/อุปสรรคหลัก (เลือกได้มากกว่า 1)</label>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <script>
+                                    ['ขาดบุคลากร/ภาระงานมาก', 'ขาดความรู้ความเข้าใจเรื่อง DM Remission', 'ขาดเครื่องมือ/สื่อสนับสนุนการให้ความรู้', 'ผู้ป่วยไม่ให้ความร่วมมือ/ปรับเปลี่ยนยาก', 'ขาดระบบติดตามต่อเนื่อง'].forEach(val => {
+                                        document.write(`
+                                            <label class="cursor-pointer block h-full">
+                                                <input type="checkbox" name="q9" value="${val}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-start gap-3 h-full hover:bg-brand-50">
+                                                    <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 mt-0.5 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white transition-colors">
+                                                        <svg class="w-3.5 h-3.5 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
+                                                    </div>
+                                                    <span class="text-sm text-brand-800 leading-relaxed">${val}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                                <label class="cursor-pointer block h-full">
+                                    <input type="checkbox" name="q9" value="อื่นๆ" class="peer sr-only" onchange="toggleCheckboxOther(this, 'q9_other')">
+                                    <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex flex-col gap-2 h-full">
+                                        <div class="flex items-center gap-3">
+                                             <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white">
+                                                <svg class="w-3.5 h-3.5 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
+                                            </div>
+                                            <span class="text-sm text-brand-800">อื่นๆ ระบุ</span>
+                                        </div>
+                                        <input type="text" name="q9_other" id="q9_other" class="w-full text-sm border-b border-brand-200 focus:border-brand-500 outline-none bg-transparent p-1 disabled:opacity-50 text-brand-900" disabled>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Readiness -->
+                <div id="step3" class="step-content p-8 md:p-12">
+                    <h2 class="text-2xl font-bold mb-2 text-brand-900 flex items-center gap-3">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 text-lg shadow-sm">3</span>
+                        ความพร้อมในการดำเนินงาน
+                    </h2>
+                    <p class="text-brand-400 mb-10 ml-14 text-sm font-medium tracking-wide">ประเมินระดับความพร้อม (กดปุ่มตัวเลข: 5 = มากที่สุด, 1 = น้อยที่สุด)</p>
+
+                    <div class="space-y-6">
+                        <script>
+                            const readinessItems = [
+                                {id: "q10", text: "นโยบายและการสนับสนุนจากผู้บริหาร"},
+                                {id: "q11", text: "ความรู้และทักษะของบุคลากร"},
+                                {id: "q12", text: "เครื่องมือ/อุปกรณ์สนับสนุน"},
+                                {id: "q13", text: "ระบบข้อมูลและสารสนเทศ"},
+                                {id: "q14", text: "การมีส่วนร่วมของภาคีเครือข่าย/ชุมชน"},
+                                {id: "q15", text: "งบประมาณสนับสนุน"}
+                            ];
+                            readinessItems.forEach(item => {
+                                document.write(`
+                                    <div class="bg-white/60 p-6 rounded-2xl border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                                        <p class="font-bold text-brand-800 mb-4 text-base md:text-lg required">${item.text}</p>
+                                        <div class="flex justify-between items-center max-w-lg mx-auto gap-2">
+                                            <span class="text-xs text-brand-300 font-bold uppercase tracking-wider hidden md:block">น้อย</span>
+                                            ${[1, 2, 3, 4, 5].map(v => `
+                                                <label class="cursor-pointer likert-btn-wrapper">
+                                                    <input type="radio" name="${item.id}" value="${v}" class="peer sr-only">
+                                                    <div class="likert-btn w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-brand-100 flex items-center justify-center text-brand-300 font-bold text-lg md:text-xl transition-all duration-300">
+                                                        ${v}
+                                                    </div>
+                                                </label>
+                                            `).join('')}
+                                            <span class="text-xs text-brand-300 font-bold uppercase tracking-wider hidden md:block">มาก</span>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                        </script>
+                    </div>
+                </div>
+
+                <!-- Section 4: Needs -->
+                <div id="step4" class="step-content p-8 md:p-12">
+                     <h2 class="text-2xl font-bold mb-8 text-brand-900 flex items-center gap-3 pb-4 border-b border-brand-100">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 text-lg shadow-sm">4</span>
+                        ความต้องการสนับสนุน
+                    </h2>
+
+                    <div class="space-y-8">
+                         <!-- Q16 -->
+                         <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">16. ต้องการแนวทาง NCDs Remission หรือไม่</label>
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <script>
+                                    ['ต้องการอย่างมาก และเร่งด่วน', 'ต้องการ', 'เฉยๆ/ยังไม่แน่ใจ', 'ไม่ต้องการ'].forEach(opt => {
+                                        document.write(`
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="q16" value="${opt}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white hover:bg-brand-50">
+                                                    <span class="text-sm font-medium text-brand-700 peer-checked:text-brand-900">${opt}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <!-- Q17 -->
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">17. เนื้อหาที่ต้องการ (เลือกได้มากกว่า 1)</label>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <script>
+                                    ['นิยามและเกณฑ์วินิจฉัย', 'การปรับเปลี่ยนพฤติกรรม', 'การจัดการด้านยา (Deprescribing)', 'ตัวอย่าง Flow Chart', 'แบบประเมินที่เกี่ยวข้อง'].forEach(val => {
+                                        document.write(`
+                                            <label class="cursor-pointer block">
+                                                <input type="checkbox" name="q17" value="${val}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-3 hover:bg-brand-50">
+                                                    <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white"><svg class="w-3 h-3 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg></div>
+                                                    <span class="text-sm text-brand-700">${val}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                                <label class="cursor-pointer block">
+                                    <input type="checkbox" name="q17" value="อื่นๆ" class="peer sr-only" onchange="toggleCheckboxOther(this, 'q17_other')">
+                                    <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex flex-col gap-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white"><svg class="w-3 h-3 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg></div>
+                                            <span class="text-sm text-brand-700">อื่นๆ ระบุ</span>
+                                        </div>
+                                        <input type="text" name="q17_other" id="q17_other" class="w-full text-sm border-b border-brand-200 p-1 disabled:bg-transparent text-brand-900" disabled>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Q18 -->
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">18. รูปแบบแนวทางที่ต้องการ</label>
+                             <div class="grid md:grid-cols-2 gap-3">
+                                <script>
+                                    ['E-book / PDF', 'รูปเล่มหนังสือ', 'Infographic / แผ่นพับ', 'คลิปวิดีโอ', 'App / Web tool'].forEach(val => {
+                                         document.write(`
+                                            <label class="cursor-pointer block">
+                                                <input type="checkbox" name="q18" value="${val}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-3 hover:bg-brand-50">
+                                                    <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white"><svg class="w-3 h-3 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg></div>
+                                                    <span class="text-sm text-brand-700">${val}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        
+                        <!-- Support Levels -->
+                        <div class="bg-brand-50/50 p-6 md:p-8 rounded-[2rem] border border-brand-100 mt-6">
+                            <h3 class="font-bold text-brand-900 mb-6 text-center text-xl">ระดับความต้องการการสนับสนุน</h3>
+                             <div class="space-y-6">
+                                <script>
+                                    const supportItems = [
+                                        {id: "q19", text: "ฝึกอบรมพัฒนาศักยภาพ"},
+                                        {id: "q20", text: "สื่อ/เครื่องมือให้ความรู้"},
+                                        {id: "q21", text: "งบประมาณ"},
+                                        {id: "q22", text: "เวทีแลกเปลี่ยนเรียนรู้"},
+                                        {id: "q23", text: "ระบบพี่เลี้ยง/Consult"},
+                                        {id: "q24", text: "การนิเทศติดตามเสริมพลัง"}
+                                    ];
+                                    supportItems.forEach(item => {
+                                        document.write(`
+                                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-brand-100 pb-5 last:border-0 last:pb-0">
+                                                <span class="text-sm md:text-base text-brand-800 font-bold md:w-5/12 required">${item.text}</span>
+                                                <div class="flex justify-between md:justify-end gap-2 md:gap-3 md:w-7/12">
+                                                    ${[1, 2, 3, 4, 5].map(v => `
+                                                        <label class="cursor-pointer likert-btn-wrapper">
+                                                            <input type="radio" name="${item.id}" value="${v}" class="peer sr-only">
+                                                            <div class="likert-btn w-9 h-9 md:w-11 md:h-11 rounded-full border-2 border-brand-200 flex items-center justify-center text-brand-400 font-bold text-base md:text-lg transition-all duration-300">
+                                                                ${v}
+                                                            </div>
+                                                        </label>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Area Specific -->
+                <div id="step5" class="step-content p-8 md:p-12">
+                     <h2 class="text-2xl font-bold mb-8 text-brand-900 flex items-center gap-3 pb-4 border-b border-brand-100">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 text-lg shadow-sm">5</span>
+                        ประเด็นเฉพาะพื้นที่ (ลดอ้วนลงพุง)
+                    </h2>
+
+                    <div class="space-y-8">
+                        <div>
+                             <label class="block font-bold mb-3 text-brand-800 required text-lg">25. หน่วยงานมีโปรแกรมลดอ้วนลงพุงหรือไม่</label>
+                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <script>
+                                    ['มี และดำเนินการต่อเนื่อง', 'มี แต่ขาดความต่อเนื่อง', 'ไม่มี'].forEach(opt => {
+                                         document.write(`
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="q25" value="${opt}" class="peer sr-only">
+                                                <div class="option-card px-4 py-4 rounded-xl border border-brand-200 bg-white hover:bg-brand-50 text-center h-full flex items-center justify-center">
+                                                    <span class="text-sm font-medium text-brand-700 peer-checked:text-brand-900">${opt}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">26. กิจกรรมที่ดำเนินการ</label>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <script>
+                                    ['คลินิก DPAC / ไร้พุง', 'ประกวดบุคคลต้นแบบ', 'รณรงค์ในชุมชน', 'กลุ่มออกกำลังกาย', 'ยังไม่ได้ดำเนินการ'].forEach(val => {
+                                        document.write(`
+                                            <label class="cursor-pointer block">
+                                                <input type="checkbox" name="q26" value="${val}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-3 hover:bg-brand-50">
+                                                    <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white"><svg class="w-3 h-3 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg></div>
+                                                    <span class="text-sm text-brand-700">${val}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                                <label class="cursor-pointer block">
+                                    <input type="checkbox" name="q26" value="อื่นๆ" class="peer sr-only" onchange="toggleCheckboxOther(this, 'q26_other')">
+                                    <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-3">
+                                         <span class="text-sm text-brand-700 shrink-0">อื่นๆ:</span>
+                                         <input type="text" name="q26_other" id="q26_other" class="w-full text-sm border-b border-brand-200 p-1 bg-transparent focus:border-brand-500 outline-none text-brand-900" disabled>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                         <div>
+                            <label class="block font-bold mb-3 text-brand-800 required text-lg">27. ปัญหา/อุปสรรค</label>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <script>
+                                    ['พฤติกรรมการกิน', 'สภาพแวดล้อม', 'ขาดแรงจูงใจ', 'ขาดแกนนำขับเคลื่อน'].forEach(val => {
+                                        document.write(`
+                                            <label class="cursor-pointer block">
+                                                <input type="checkbox" name="q27" value="${val}" class="peer sr-only">
+                                                <div class="option-card px-5 py-4 rounded-xl border border-brand-200 bg-white flex items-center gap-3 hover:bg-brand-50">
+                                                    <div class="w-5 h-5 rounded border border-brand-300 flex items-center justify-center shrink-0 peer-checked:bg-brand-500 peer-checked:border-brand-500 text-white"><svg class="w-3 h-3 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg></div>
+                                                    <span class="text-sm text-brand-700">${val}</span>
+                                                </div>
+                                            </label>
+                                        `);
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Suggestions -->
+                <div id="step6" class="step-content p-8 md:p-12">
+                     <h2 class="text-2xl font-bold mb-8 text-brand-900 flex items-center gap-3 pb-4 border-b border-brand-100">
+                        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-brand-100 text-brand-600 text-lg shadow-sm">6</span>
+                        ข้อเสนอแนะเพิ่มเติม
+                    </h2>
+
+                    <div class="bg-gold-400/10 border-l-4 border-gold-400 p-5 rounded-r-xl mb-8">
+                        <p class="text-xs md:text-sm text-gold-600 font-medium">
+                            <strong>⚠️ คำเตือน PDPA:</strong> โปรดหลีกเลี่ยงการกรอกข้อมูลส่วนบุคคลที่ระบุตัวตนได้ เช่น ชื่อ-สกุล, เลขบัตรประชาชน หรือเบอร์โทรศัพท์ส่วนตัว
+                        </p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block font-bold mb-2 text-brand-800 text-lg">28. ปัจจัยความสำเร็จ (Key Success Factor)</label>
+                            <textarea name="q28" rows="3" class="w-full border border-brand-200 rounded-2xl p-4 focus:ring-2 focus:ring-brand-400 focus:border-brand-400 outline-none transition-all text-brand-900 bg-white" oninput="checkPII(this)"></textarea>
+                            <p class="text-xs text-brand-500 mt-1 hidden" id="q28-error"></p>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-2 text-brand-800 text-lg">29. ข้อเสนอแนะต่อ สคร.7</label>
+                            <textarea name="q29" rows="3" class="w-full border border-brand-200 rounded-2xl p-4 focus:ring-2 focus:ring-brand-400 focus:border-brand-400 outline-none transition-all text-brand-900 bg-white" oninput="checkPII(this)"></textarea>
+                            <p class="text-xs text-brand-500 mt-1 hidden" id="q29-error"></p>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-2 text-brand-800 text-lg">30. ข้อเสนอแนะอื่นๆ</label>
+                            <textarea name="q30" rows="3" class="w-full border border-brand-200 rounded-2xl p-4 focus:ring-2 focus:ring-brand-400 focus:border-brand-400 outline-none transition-all text-brand-900 bg-white" oninput="checkPII(this)"></textarea>
+                            <p class="text-xs text-brand-500 mt-1 hidden" id="q30-error"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer / Nav -->
+                <div class="bg-white/50 px-8 py-8 border-t border-brand-100 flex flex-col-reverse md:flex-row justify-between items-center gap-5 backdrop-blur-sm rounded-b-[2rem]">
+                    <button type="button" id="prevBtn" class="hidden px-6 py-3 rounded-full text-brand-500 font-bold hover:bg-brand-50 transition-colors" onclick="changeStep(-1)">
+                        ← ย้อนกลับ
+                    </button>
+                    <div class="flex gap-4 w-full md:w-auto justify-end">
+                        <button type="button" id="draftBtn" class="hidden px-6 py-3 rounded-full bg-gold-400/20 text-gold-600 font-bold hover:bg-gold-400/30 transition-colors text-sm" onclick="saveDraft()">
+                            บันทึกร่าง
+                        </button>
+                        <button type="button" id="nextBtn" class="flex-1 md:flex-none px-10 py-3 rounded-full bg-brand-500 text-white font-bold hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/30 transform hover:-translate-y-1" onclick="changeStep(1)">
+                            ถัดไป →
+                        </button>
+                        <button type="submit" id="submitBtn" class="hidden flex-1 md:flex-none px-10 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/30 transform hover:-translate-y-1" onclick="submitForm()">
+                            ส่งแบบประเมิน
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- DASHBOARD OVERLAY -->
+        <div id="dashboardView" class="fixed inset-0 bg-brand-900/95 backdrop-blur-xl z-50 hidden overflow-y-auto custom-scrollbar transition-opacity duration-300">
+            <div class="max-w-7xl mx-auto p-4 md:p-8">
+                <div class="flex justify-between items-center mb-8 sticky top-0 bg-brand-900/90 z-10 py-2 backdrop-blur-md">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white tracking-tight">Executive Dashboard</h2>
+                        <p class="text-brand-200 text-sm">Real-time Data Visualization</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="exportToWord()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-full text-sm font-bold transition-all shadow-lg flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Export Word
+                        </button>
+                        <button onclick="toggleDashboard()" class="bg-white/10 text-white hover:bg-white/20 rounded-full p-2 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="dashboardLoading" class="flex flex-col items-center justify-center h-96">
+                    <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-brand-400 mb-4"></div>
+                    <p class="text-brand-200">กำลังซิงค์ข้อมูล...</p>
+                </div>
+
+                <div id="dashboardContent" class="hidden space-y-8 animate__animated animate__fadeIn pb-10">
+                    
+                    <!-- 1. KPI Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white/10 border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:bg-white/15 transition-all">
+                            <h3 class="text-brand-200 text-sm uppercase tracking-wider mb-2 font-bold">Total Responses</h3>
+                            <p class="text-5xl font-bold text-white" id="statTotal">0</p>
+                        </div>
+                        <div class="bg-white/10 border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:bg-white/15 transition-all">
+                            <h3 class="text-brand-200 text-sm uppercase tracking-wider mb-2 font-bold">Avg. Readiness</h3>
+                            <div class="flex items-end gap-2"><p class="text-5xl font-bold text-emerald-300" id="statReadiness">0.0</p><span class="text-sm text-brand-300 mb-2 font-bold">/ 5.0</span></div>
+                        </div>
+                        <div class="bg-white/10 border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:bg-white/15 transition-all">
+                            <h3 class="text-brand-200 text-sm uppercase tracking-wider mb-2 font-bold">Avg. Needs Support</h3>
+                            <div class="flex items-end gap-2"><p class="text-5xl font-bold text-gold-300" id="statNeeds">0.0</p><span class="text-sm text-brand-300 mb-2 font-bold">/ 5.0</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Data Summary Tables -->
+                    <h3 class="text-2xl text-white font-bold border-l-4 border-gold-400 pl-4">📊 Data Summary Tables</h3>
+                    <div id="dataTables" class="space-y-6"></div>
+
+                    <!-- 3. General Info Section -->
+                    <h3 class="text-2xl text-white font-bold border-l-4 border-gold-400 pl-4">1. ข้อมูลทั่วไป (General Info)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="chart-card"><h4 class="chart-title">หน่วยงาน (Agency)</h4><canvas id="chartQ1"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">จังหวัด (Province)</h4><canvas id="chartQ2"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ตำแหน่ง (Role)</h4><canvas id="chartQ3"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ประสบการณ์ (Experience)</h4><canvas id="chartQ4"></canvas></div>
+                    </div>
+
+                    <!-- 4. Situation Section (All Bar Charts) -->
+                    <h3 class="text-2xl text-white font-bold border-l-4 border-gold-400 pl-4">2. สถานการณ์ (Situation)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="chart-card"><h4 class="chart-title">สถานะดำเนินงาน</h4><canvas id="chartQ5"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ความรู้ความเข้าใจ</h4><canvas id="chartQ6"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ปัญหาอุปสรรคหลัก</h4><canvas id="chartQ9"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ผู้ป่วย HbA1c < 7%</h4><canvas id="chartQ7"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ผู้ป่วยอ้วนลงพุง</h4><canvas id="chartQ8"></canvas></div>
+                    </div>
+
+                    <!-- 5. Readiness vs Support -->
+                    <h3 class="text-2xl text-white font-bold border-l-4 border-gold-400 pl-4">3. ความพร้อม & ความต้องการ</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="chart-card"><h4 class="chart-title">ระดับความพร้อมรายด้าน (Avg.)</h4><canvas id="chartReadiness"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ความต้องการสนับสนุนรายด้าน (Avg.)</h4><canvas id="chartSupport"></canvas></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="chart-card"><h4 class="chart-title">ต้องการแนวทาง?</h4><canvas id="chartQ16"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">เนื้อหาที่ต้องการ</h4><canvas id="chartQ17"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">รูปแบบสื่อที่ต้องการ</h4><canvas id="chartQ18"></canvas></div>
+                    </div>
+
+                    <!-- 6. Area Specific (Bar Chart for Q25) -->
+                    <h3 class="text-2xl text-white font-bold border-l-4 border-gold-400 pl-4">4. ประเด็นพื้นที่ (Area Specific)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="chart-card"><h4 class="chart-title">มีโปรแกรมลดพุง?</h4><canvas id="chartQ25"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">กิจกรรมที่ทำ</h4><canvas id="chartQ26"></canvas></div>
+                        <div class="chart-card"><h4 class="chart-title">ปัญหาในพื้นที่</h4><canvas id="chartQ27"></canvas></div>
+                    </div>
+
+                    <!-- 7. Suggestions -->
+                    <div class="bg-white/10 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
+                         <h4 class="font-bold text-white mb-6 flex items-center gap-3 text-xl">
+                            <span class="text-gold-400">💬</span> ข้อเสนอแนะล่าสุด (Latest Suggestions)
+                        </h4>
+                        <div id="suggestionsList" class="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar"></div>
+                    </div>
+
+                    <p class="text-center text-xs text-brand-300/50 mt-10">Last update: <span id="lastUpdate"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center mt-16 text-sm text-brand-400/70 pb-10">
+             <div class="flex justify-center items-center gap-3 mb-3">
+                 <div class="h-px w-10 bg-brand-200"></div>
+                 <span class="font-semibold tracking-wide">DPC 7 Khon Kaen</span>
+                 <div class="h-px w-10 bg-brand-200"></div>
+             </div>
+             <p class="text-xs">© 2024 NCDs Bureau. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <!-- Logic Script -->
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxQa2jkmTYcR_nigtVUhPtnHNP4qLi5_XS61MIpKSx3vpDOfx647diFcnKF1vrY3BFZ/exec'; 
+        
+        const DRAFT_KEY = 'ncd_remission_lux_v1';
+        const TOTAL_STEPS = 6;
+        let currentStep = 0;
+        let globalDashboardData = null; // Store dashboard data globally for export
+        
+        const PII_PATTERNS = [
+            { regex: /\b\d{13}\b/, msg: "พบเลขบัตรประชาชน" },
+            { regex: /\b(06|08|09)\d{8}\b|\b0\d{8}\b/, msg: "พบเบอร์โทรศัพท์" },
+            { regex: /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/, msg: "พบอีเมล" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDraft();
+            updateUI();
+        });
+
+        // --- Dashboard Functions ---
+        function toggleDashboard() {
+            const el = document.getElementById('dashboardView');
+            const body = document.body;
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                body.style.overflow = 'hidden';
+                fetchDashboardData();
+            } else {
+                el.classList.add('hidden');
+                body.style.overflow = 'auto';
+            }
+        }
+
+        function fetchDashboardData() {
+            const loading = document.getElementById('dashboardLoading');
+            const content = document.getElementById('dashboardContent');
+            
+            loading.classList.remove('hidden');
+            content.classList.add('hidden');
+
+            fetch(APPS_SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === 'error') throw new Error(data.error);
+                loading.classList.add('hidden');
+                content.classList.remove('hidden');
+                globalDashboardData = data; // Store globally
+                renderDashboard(data);
+            })
+            .catch(err => {
+                console.error(err);
+                loading.innerHTML = '<p class="text-red-400">Connection Failed</p>';
+                // Fallback for demo if API fails
+                mockRender();
+            });
+        }
+        
+        function mockRender() {
+            const mockData = {
+                total_responses: 42,
+                avg_readiness: 3.8,
+                avg_needs: 4.5,
+                q1_agency: {"สสจ.":5,"รพศ./รพท.":10,"รพช.":15,"สสอ.":8,"รพ.สต.":4},
+                q2_province: {"ร้อยเอ็ด":10,"ขอนแก่น":20,"มหาสารคาม":8,"กาฬสินธุ์":4},
+                q3_role: {"แพทย์":5,"พยาบาล":20,"นักวิชาการ":10,"อื่นๆ":7},
+                q4_experience: {"น้อยกว่า 1 ปี":10,"1 - 3 ปี":15,"10 ปีขึ้นไป":5},
+                q5_status: {"มีการดำเนินงาน":10,"เตรียมความพร้อม":20,"ยังไม่มีแผน":12},
+                q6_knowledge: {"เข้าใจดี":15,"พอรู้บ้าง":20,"ไม่เคยได้ยิน":7},
+                q7_hba1c: {"< 20%":10,"20-39%":15,"> 60%":5},
+                q8_waist: {"< 20%":12,"20-39%":18},
+                q9_obstacles: {"ขาดบุคลากร":25,"ขาดความรู้":20,"ผู้ป่วยไม่ร่วมมือ":15},
+                readiness_scores: [3.5, 3.8, 3.2, 3.0, 4.0, 2.5],
+                q16_need_guide: {"ต้องการมาก":30,"เฉยๆ":10,"ไม่ต้องการ":2},
+                q17_content: {"นิยาม":35,"Flow Chart":28,"แบบประเมิน":25},
+                q18_format: {"E-book":20,"App":15,"Infographic":7},
+                support_scores: [4.5, 4.2, 4.8, 3.5, 4.0, 3.8],
+                q25_program: {"มี":15,"มีแต่ไม่ต่อเนื่อง":10,"ไม่มี":17},
+                q26_activities: {"DPAC":20,"รณรงค์":15},
+                q27_area_obstacles: {"พฤติกรรมกิน":30,"สิ่งแวดล้อม":10},
+                suggestions: [{text:"ควรมีงบประมาณสนับสนุนเพิ่มเติม"}, {text:"อยากได้คู่มือแบบ E-book"}]
+            };
+            document.getElementById('dashboardLoading').classList.add('hidden');
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            globalDashboardData = mockData;
+            renderDashboard(mockData);
+             Swal.fire({
+                icon: 'info',
+                title: 'Simulation Mode',
+                text: 'Showing mock data because backend connection failed.',
+                toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3000
+            });
+        }
+
+        let charts = {};
+
+        function renderDashboard(data) {
+            // Ensure data objects exist
+            data.q1_agency = data.q1_agency || {};
+            data.q2_province = data.q2_province || {};
+            data.q3_role = data.q3_role || {};
+            data.q4_experience = data.q4_experience || {};
+            data.q5_status = data.q5_status || {};
+            data.q6_knowledge = data.q6_knowledge || {};
+            data.q7_hba1c = data.q7_hba1c || {};
+            data.q8_waist = data.q8_waist || {};
+            data.q9_obstacles = data.q9_obstacles || {};
+            data.q16_need_guide = data.q16_need_guide || {};
+            data.q17_content = data.q17_content || {};
+            data.q18_format = data.q18_format || {};
+            data.q25_program = data.q25_program || {};
+            data.q26_activities = data.q26_activities || {};
+            data.q27_area_obstacles = data.q27_area_obstacles || {};
+            data.readiness_scores = data.readiness_scores || [0,0,0,0,0,0];
+            data.support_scores = data.support_scores || [0,0,0,0,0,0];
+            data.avg_readiness = data.avg_readiness || 0;
+            data.avg_needs = data.avg_needs || 0;
+            data.total_responses = data.total_responses || 0;
+
+            document.getElementById('statTotal').innerText = data.total_responses;
+            document.getElementById('statReadiness').innerText = data.avg_readiness.toFixed(2);
+            document.getElementById('statNeeds').innerText = data.avg_needs.toFixed(2);
+            document.getElementById('lastUpdate').innerText = new Date().toLocaleString('th-TH');
+
+            // Render Summary Tables
+            renderDataTables(data);
+
+            // Helper to create chart
+            const createChart = (id, type, labels, values, labelStr, colors) => {
+                if (charts[id]) charts[id].destroy();
+                const ctx = document.getElementById(id).getContext('2d');
+                charts[id] = new Chart(ctx, {
+                    type: type,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: labelStr,
+                            data: values,
+                            backgroundColor: colors || ['#f43f5e','#fb7185','#fda4af','#fecdd3','#ffe4e6','#be123c', '#fbbf24', '#10b981', '#6366f1'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: true,
+                        plugins: { legend: { display: type !== 'bar', position: 'bottom' } },
+                        scales: type === 'bar' ? { 
+                            y: { beginAtZero: true },
+                            x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } }
+                        } : {}
+                    }
+                });
+            };
+
+            // 1. General Info
+            createChart('chartQ1', 'doughnut', Object.keys(data.q1_agency), Object.values(data.q1_agency), 'หน่วยงาน');
+            createChart('chartQ2', 'bar', Object.keys(data.q2_province), Object.values(data.q2_province), 'จังหวัด', '#f43f5e');
+            createChart('chartQ3', 'bar', Object.keys(data.q3_role), Object.values(data.q3_role), 'ตำแหน่ง', '#fbbf24');
+            createChart('chartQ4', 'bar', Object.keys(data.q4_experience), Object.values(data.q4_experience), 'ประสบการณ์', '#10b981');
+
+            // 2. Situation (ALL BAR CHARTS)
+            createChart('chartQ5', 'bar', Object.keys(data.q5_status), Object.values(data.q5_status), 'สถานะ', '#f43f5e');
+            createChart('chartQ6', 'bar', Object.keys(data.q6_knowledge), Object.values(data.q6_knowledge), 'ความรู้', '#fb7185');
+            createChart('chartQ7', 'bar', Object.keys(data.q7_hba1c), Object.values(data.q7_hba1c), 'HbA1c', '#6366f1');
+            createChart('chartQ8', 'bar', Object.keys(data.q8_waist), Object.values(data.q8_waist), 'ลงพุง', '#8b5cf6');
+            createChart('chartQ9', 'bar', Object.keys(data.q9_obstacles), Object.values(data.q9_obstacles), 'อุปสรรค', '#ef4444');
+
+            // 3. Readiness vs Needs - Radar
+            if (charts['chartReadiness']) charts['chartReadiness'].destroy();
+            charts['chartReadiness'] = new Chart(document.getElementById('chartReadiness'), {
+                type: 'radar',
+                data: {
+                    labels: ['นโยบาย', 'ทักษะ', 'เครื่องมือ', 'ข้อมูล', 'เครือข่าย', 'งบประมาณ'],
+                    datasets: [{ label: 'คะแนนเฉลี่ย', data: data.readiness_scores, backgroundColor: 'rgba(244, 63, 94, 0.2)', borderColor: '#f43f5e', pointBackgroundColor: '#f43f5e' }]
+                },
+                options: { scales: { r: { min: 0, max: 5 } } }
+            });
+            
+            if (charts['chartSupport']) charts['chartSupport'].destroy();
+            charts['chartSupport'] = new Chart(document.getElementById('chartSupport'), {
+                type: 'radar',
+                data: {
+                    labels: ['อบรม', 'สื่อ', 'งบประมาณ', 'เวที', 'พี่เลี้ยง', 'นิเทศ'],
+                    datasets: [{ label: 'คะแนนเฉลี่ย', data: data.support_scores, backgroundColor: 'rgba(251, 191, 36, 0.2)', borderColor: '#fbbf24', pointBackgroundColor: '#fbbf24' }]
+                },
+                options: { scales: { r: { min: 0, max: 5 } } }
+            });
+
+            // Change Q16 and Q18 to BAR charts
+            createChart('chartQ16', 'bar', Object.keys(data.q16_need_guide), Object.values(data.q16_need_guide), 'ต้องการแนวทาง', '#f43f5e');
+            createChart('chartQ17', 'bar', Object.keys(data.q17_content), Object.values(data.q17_content), 'เนื้อหา', '#ec4899');
+            createChart('chartQ18', 'bar', Object.keys(data.q18_format), Object.values(data.q18_format), 'รูปแบบสื่อ', '#a855f7');
+
+            // 4. Area - Change Q25 to BAR
+            createChart('chartQ25', 'bar', Object.keys(data.q25_program), Object.values(data.q25_program), 'โปรแกรม', '#f43f5e');
+            createChart('chartQ26', 'bar', Object.keys(data.q26_activities), Object.values(data.q26_activities), 'กิจกรรม', '#06b6d4');
+            createChart('chartQ27', 'bar', Object.keys(data.q27_area_obstacles), Object.values(data.q27_area_obstacles), 'ปัญหาพื้นที่', '#f97316');
+
+            // 5. Suggestions
+            const list = document.getElementById('suggestionsList');
+            list.innerHTML = '';
+            if(data.suggestions && data.suggestions.length > 0) {
+                data.suggestions.forEach(s => {
+                    list.innerHTML += `<div class="bg-white/10 p-3 rounded-lg border border-white/5 text-white text-sm"><p>${s.text}</p></div>`;
+                });
+            } else {
+                list.innerHTML = '<p class="text-white/50 italic">ยังไม่มีข้อเสนอแนะ</p>';
+            }
+        }
+
+        // NEW: Render Data Summary Tables
+        function renderDataTables(data) {
+            const container = document.getElementById('dataTables');
+            container.innerHTML = '';
+
+            const tableGroups = [
+                {
+                    title: 'ข้อมูลทั่วไป (General Info)',
+                    tables: [
+                        { name: 'หน่วยงาน', data: data.q1_agency },
+                        { name: 'จังหวัด', data: data.q2_province },
+                        { name: 'ตำแหน่ง', data: data.q3_role },
+                        { name: 'ประสบการณ์', data: data.q4_experience }
+                    ]
+                },
+                {
+                    title: 'สถานการณ์ (Situation)',
+                    tables: [
+                        { name: 'สถานะดำเนินงาน', data: data.q5_status },
+                        { name: 'ความรู้ความเข้าใจ', data: data.q6_knowledge },
+                        { name: 'HbA1c < 7%', data: data.q7_hba1c },
+                        { name: 'ผู้ป่วยอ้วนลงพุง', data: data.q8_waist },
+                        { name: 'ปัญหา/อุปสรรค', data: data.q9_obstacles }
+                    ]
+                },
+                {
+                    title: 'ความพร้อม & ความต้องการ',
+                    tables: [
+                        { name: 'ต้องการแนวทาง', data: data.q16_need_guide },
+                        { name: 'เนื้อหาที่ต้องการ', data: data.q17_content },
+                        { name: 'รูปแบบสื่อ', data: data.q18_format }
+                    ]
+                },
+                {
+                    title: 'ประเด็นพื้นที่',
+                    tables: [
+                        { name: 'มีโปรแกรมลดพุง', data: data.q25_program },
+                        { name: 'กิจกรรมที่ทำ', data: data.q26_activities },
+                        { name: 'ปัญหาในพื้นที่', data: data.q27_area_obstacles }
+                    ]
+                }
+            ];
+            
+            tableGroups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'table-container';
+                groupDiv.innerHTML = `<h4 class="text-xl font-bold text-brand-900 mb-4">${group.title}</h4>`;
+                
+                const tablesGrid = document.createElement('div');
+                tablesGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
+
+                group.tables.forEach(table => {
+                    const tableDiv = document.createElement('div');
+                    const totalCount = Object.values(table.data).reduce((a, b) => a + b, 0);
+                    
+                    let tableHTML = `
+                        <h5 class="font-bold text-brand-800 mb-2">${table.name}</h5>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>รายการ</th>
+                                        <th class="text-right">จำนวน</th>
+                                        <th class="text-right">ร้อยละ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+
+                    for (const [key, value] of Object.entries(table.data)) {
+                        const percent = totalCount > 0 ? ((value / totalCount) * 100).toFixed(1) : 0;
+                        tableHTML += `
+                            <tr>
+                                <td>${key}</td>
+                                <td class="text-right font-semibold">${value}</td>
+                                <td class="text-right text-brand-600">${percent}%</td>
+                            </tr>
+                        `;
+                    }
+
+                    tableHTML += `
+                                    <tr class="bg-brand-50 font-bold">
+                                        <td>รวม</td>
+                                        <td class="text-right">${totalCount}</td>
+                                        <td class="text-right">100%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+
+                    tableDiv.innerHTML = tableHTML;
+                    tablesGrid.appendChild(tableDiv);
+                });
+
+                groupDiv.appendChild(tablesGrid);
+                container.appendChild(groupDiv);
+            });
+
+            // Add Readiness & Support Score Tables
+            const scoresDiv = document.createElement('div');
+            scoresDiv.className = 'table-container';
+            scoresDiv.innerHTML = `
+                <h4 class="text-xl font-bold text-brand-900 mb-4">คะแนนความพร้อมและความต้องการ</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h5 class="font-bold text-brand-800 mb-2">ความพร้อม (คะแนนเฉลี่ย)</h5>
+                        <table class="data-table">
+                            <thead><tr><th>ด้าน</th><th class="text-right">คะแนน</th></tr></thead>
+                            <tbody>
+                                ${['นโยบาย', 'ทักษะ', 'เครื่องมือ', 'ข้อมูล', 'เครือข่าย', 'งบประมาณ'].map((label, i) => 
+                                    `<tr><td>${label}</td><td class="text-right font-semibold">${data.readiness_scores[i].toFixed(2)}</td></tr>`
+                                ).join('')}
+                                <tr class="bg-brand-50 font-bold">
+                                    <td>เฉลี่ยรวม</td>
+                                    <td class="text-right">${data.avg_readiness.toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-brand-800 mb-2">ความต้องการสนับสนุน (คะแนนเฉลี่ย)</h5>
+                        <table class="data-table">
+                            <thead><tr><th>ด้าน</th><th class="text-right">คะแนน</th></tr></thead>
+                            <tbody>
+                                ${['อบรม', 'สื่อ', 'งบประมาณ', 'เวที', 'พี่เลี้ยง', 'นิเทศ'].map((label, i) => 
+                                    `<tr><td>${label}</td><td class="text-right font-semibold">${data.support_scores[i].toFixed(2)}</td></tr>`
+                                ).join('')}
+                                <tr class="bg-brand-50 font-bold">
+                                    <td>เฉลี่ยรวม</td>
+                                    <td class="text-right">${data.avg_needs.toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            container.appendChild(scoresDiv);
+        }
+
+        // NEW: Export to Word Function
+        async function exportToWord() {
+            if (!globalDashboardData) {
+                Swal.fire({ icon: 'error', title: 'ไม่มีข้อมูล', text: 'กรุณาโหลด Dashboard ก่อน', confirmButtonColor: '#be123c' });
+                return;
+            }
+
+            Swal.fire({
+                title: 'กำลังสร้างเอกสาร...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const { Document, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, HeadingLevel, BorderStyle } = docx;
+                
+                const data = globalDashboardData;
+                
+                // Document sections
+                const sections = [];
+                
+                // Title
+                sections.push(
+                    new Paragraph({
+                        text: "รายงานผลการสำรวจ NCDs Remission",
+                        heading: HeadingLevel.HEADING_1,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        text: `เขตสุขภาพที่ 7 ขอนแก่น`,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `วันที่: ${new Date().toLocaleDateString('th-TH')}`,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 600 }
+                    })
+                );
+
+                // Summary Statistics
+                sections.push(
+                    new Paragraph({
+                        text: "สรุปภาพรวม",
+                        heading: HeadingLevel.HEADING_2,
+                        spacing: { before: 400, after: 200 }
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({ text: "จำนวนผู้ตอบแบบสอบถาม: ", bold: true }),
+                            new TextRun(`${data.total_responses} คน`)
+                        ],
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({ text: "คะแนนเฉลี่ยความพร้อม: ", bold: true }),
+                            new TextRun(`${data.avg_readiness.toFixed(2)} / 5.0`)
+                        ],
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        children: [
+                            new TextRun({ text: "คะแนนเฉลี่ยความต้องการสนับสนุน: ", bold: true }),
+                            new TextRun(`${data.avg_needs.toFixed(2)} / 5.0`)
+                        ],
+                        spacing: { after: 400 }
+                    })
+                );
+
+                // Helper function to create table
+                const createDataTable = (title, dataObj) => {
+                    const totalCount = Object.values(dataObj).reduce((a, b) => a + b, 0);
+                    const rows = [
+                        new TableRow({
+                            children: [
+                                new TableCell({ children: [new Paragraph({ text: "รายการ", bold: true })], shading: { fill: "F43F5E" } }),
+                                new TableCell({ children: [new Paragraph({ text: "จำนวน", bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "F43F5E" } }),
+                                new TableCell({ children: [new Paragraph({ text: "ร้อยละ", bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "F43F5E" } })
+                            ]
+                        })
+                    ];
+
+                    for (const [key, value] of Object.entries(dataObj)) {
+                        const percent = totalCount > 0 ? ((value / totalCount) * 100).toFixed(1) : 0;
+                        rows.push(
+                            new TableRow({
+                                children: [
+                                    new TableCell({ children: [new Paragraph(key)] }),
+                                    new TableCell({ children: [new Paragraph({ text: String(value), alignment: AlignmentType.RIGHT })] }),
+                                    new TableCell({ children: [new Paragraph({ text: `${percent}%`, alignment: AlignmentType.RIGHT })] })
+                                ]
+                            })
+                        );
+                    }
+
+                    // Total row
+                    rows.push(
+                        new TableRow({
+                            children: [
+                                new TableCell({ children: [new Paragraph({ text: "รวม", bold: true })], shading: { fill: "FFE4E6" } }),
+                                new TableCell({ children: [new Paragraph({ text: String(totalCount), bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "FFE4E6" } }),
+                                new TableCell({ children: [new Paragraph({ text: "100%", bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "FFE4E6" } })
+                            ]
+                        })
+                    );
+
+                    return [
+                        new Paragraph({ text: title, heading: HeadingLevel.HEADING_3, spacing: { before: 300, after: 150 } }),
+                        new Table({
+                            width: { size: 100, type: WidthType.PERCENTAGE },
+                            rows: rows
+                        }),
+                        new Paragraph({ text: "", spacing: { after: 200 } })
+                    ];
+                };
+
+                // Add all data tables
+                sections.push(...createDataTable("1. หน่วยงานที่สังกัด", data.q1_agency));
+                sections.push(...createDataTable("2. จังหวัด", data.q2_province));
+                sections.push(...createDataTable("3. ตำแหน่ง/บทบาท", data.q3_role));
+                sections.push(...createDataTable("4. ประสบการณ์งาน NCDs", data.q4_experience));
+                sections.push(...createDataTable("5. สถานะการดำเนินงาน", data.q5_status));
+                sections.push(...createDataTable("6. ความเข้าใจเกณฑ์/นิยาม", data.q6_knowledge));
+                sections.push(...createDataTable("7. ผู้ป่วย HbA1c < 7%", data.q7_hba1c));
+                sections.push(...createDataTable("8. ผู้ป่วยอ้วนลงพุง", data.q8_waist));
+                sections.push(...createDataTable("9. ปัญหา/อุปสรรค", data.q9_obstacles));
+                sections.push(...createDataTable("16. ต้องการแนวทาง", data.q16_need_guide));
+                sections.push(...createDataTable("17. เนื้อหาที่ต้องการ", data.q17_content));
+                sections.push(...createDataTable("18. รูปแบบสื่อที่ต้องการ", data.q18_format));
+                sections.push(...createDataTable("25. มีโปรแกรมลดพุง", data.q25_program));
+                sections.push(...createDataTable("26. กิจกรรมที่ดำเนินการ", data.q26_activities));
+                sections.push(...createDataTable("27. ปัญหา/อุปสรรคในพื้นที่", data.q27_area_obstacles));
+
+                // Readiness Scores
+                sections.push(
+                    new Paragraph({ text: "คะแนนความพร้อม (รายด้าน)", heading: HeadingLevel.HEADING_3, spacing: { before: 300, after: 150 } }),
+                    new Table({
+                        width: { size: 100, type: WidthType.PERCENTAGE },
+                        rows: [
+                            new TableRow({
+                                children: [
+                                    new TableCell({ children: [new Paragraph({ text: "ด้าน", bold: true })], shading: { fill: "F43F5E" } }),
+                                    new TableCell({ children: [new Paragraph({ text: "คะแนนเฉลี่ย", bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "F43F5E" } })
+                                ]
+                            }),
+                            ...['นโยบาย', 'ทักษะ', 'เครื่องมือ', 'ข้อมูล', 'เครือข่าย', 'งบประมาณ'].map((label, i) => 
+                                new TableRow({
+                                    children: [
+                                        new TableCell({ children: [new Paragraph(label)] }),
+                                        new TableCell({ children: [new Paragraph({ text: data.readiness_scores[i].toFixed(2), alignment: AlignmentType.RIGHT })] })
+                                    ]
+                                })
+                            ),
+                            new TableRow({
+                                children: [
+                                    new TableCell({ children: [new Paragraph({ text: "เฉลี่ยรวม", bold: true })], shading: { fill: "FFE4E6" } }),
+                                    new TableCell({ children: [new Paragraph({ text: data.avg_readiness.toFixed(2), bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "FFE4E6" } })
+                                ]
+                            })
+                        ]
+                    }),
+                    new Paragraph({ text: "", spacing: { after: 200 } })
+                );
+
+                // Support Scores
+                sections.push(
+                    new Paragraph({ text: "คะแนนความต้องการสนับสนุน (รายด้าน)", heading: HeadingLevel.HEADING_3, spacing: { before: 300, after: 150 } }),
+                    new Table({
+                        width: { size: 100, type: WidthType.PERCENTAGE },
+                        rows: [
+                            new TableRow({
+                                children: [
+                                    new TableCell({ children: [new Paragraph({ text: "ด้าน", bold: true })], shading: { fill: "FBBF24" } }),
+                                    new TableCell({ children: [new Paragraph({ text: "คะแนนเฉลี่ย", bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "FBBF24" } })
+                                ]
+                            }),
+                            ...['อบรม', 'สื่อ', 'งบประมาณ', 'เวที', 'พี่เลี้ยง', 'นิเทศ'].map((label, i) => 
+                                new TableRow({
+                                    children: [
+                                        new TableCell({ children: [new Paragraph(label)] }),
+                                        new TableCell({ children: [new Paragraph({ text: data.support_scores[i].toFixed(2), alignment: AlignmentType.RIGHT })] })
+                                    ]
+                                })
+                            ),
+                            new TableRow({
+                                children: [
+                                    new TableCell({ children: [new Paragraph({ text: "เฉลี่ยรวม", bold: true })], shading: { fill: "FEF3C7" } }),
+                                    new TableCell({ children: [new Paragraph({ text: data.avg_needs.toFixed(2), bold: true, alignment: AlignmentType.RIGHT })], shading: { fill: "FEF3C7" } })
+                                ]
+                            })
+                        ]
+                    })
+                );
+
+                // Suggestions
+                if (data.suggestions && data.suggestions.length > 0) {
+                    sections.push(
+                        new Paragraph({ text: "ข้อเสนอแนะ", heading: HeadingLevel.HEADING_2, spacing: { before: 400, after: 200 } })
+                    );
+                    data.suggestions.forEach((s, i) => {
+                        sections.push(
+                            new Paragraph({
+                                text: `${i + 1}. ${s.text}`,
+                                spacing: { after: 100 }
+                            })
+                        );
+                    });
+                }
+
+                // Create document
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: sections
+                    }]
+                });
+
+                // Generate and download
+                const blob = await docx.Packer.toBlob(doc);
+                saveAs(blob, `NCDs_Remission_Report_${new Date().toISOString().split('T')[0]}.docx`);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ส่งออกสำเร็จ!',
+                    text: 'ไฟล์ Word ถูกดาวน์โหลดแล้ว',
+                    confirmButtonColor: '#10b981'
+                });
+
+            } catch (error) {
+                console.error('Export error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถสร้างไฟล์ Word ได้: ' + error.message,
+                    confirmButtonColor: '#be123c'
+                });
+            }
+        }
+
+        // --- Form Logic Functions ---
+        function handleSpecificInput(selectName, inputId) {
+            const select = document.querySelector(`select[name="${selectName}"]`);
+            const input = document.getElementById(inputId);
+            
+            if (select.value && select.value !== "") { 
+                input.disabled = false; 
+                input.classList.remove('bg-brand-50');
+                
+                if (select.value === 'อื่นๆ') {
+                     input.placeholder = "โปรดระบุ...";
+                     input.focus();
+                } else {
+                     input.placeholder = "ระบุชื่อเพิ่มเติม (ถ้ามี)";
+                }
+            } else { 
+                input.disabled = true; 
+                input.value = ''; 
+                input.classList.add('bg-brand-50');
+            }
+        }
+
+        function toggleCheckboxOther(checkbox, inputId) {
+            const input = document.getElementById(inputId);
+            if (checkbox.checked) { input.disabled = false; input.focus(); } 
+            else { input.disabled = true; input.value = ''; }
+        }
+
+        function checkPII(element) {
+            let found = false;
+            PII_PATTERNS.forEach(p => { if (p.regex.test(element.value)) found = true; });
+            const errorEl = document.getElementById(element.name + '-error');
+            const submitBtn = document.getElementById('submitBtn');
+            if (found) {
+                element.classList.add('pii-warning');
+                errorEl.innerText = "⚠️ พบข้อมูลส่วนบุคคล (เบอร์โทร/เลขบัตร/อีเมล) กรุณาลบออก";
+                errorEl.classList.remove('hidden');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                element.classList.remove('pii-warning');
+                errorEl.classList.add('hidden');
+                if (document.querySelectorAll('.pii-warning').length === 0) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function checkConsent(value) {
+            if (value === 'disagree') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ท่านเลือกไม่ยินยอม',
+                    text: 'ระบบจะปิดการทำงาน',
+                    confirmButtonColor: '#9f1239'
+                }).then(() => {
+                    localStorage.removeItem(DRAFT_KEY);
+                    window.location.reload();
+                });
+            }
+        }
+
+        function changeStep(n) {
+            if (n === 1 && !validateStep(currentStep)) return;
+            const steps = document.getElementsByClassName("step-content");
+            steps[currentStep].classList.remove("active");
+            currentStep += n;
+            steps[currentStep].classList.add("active");
+            updateUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateUI() {
+            const percent = (currentStep / TOTAL_STEPS) * 100;
+            document.getElementById("progressBar").style.width = percent + "%";
+            document.getElementById("prevBtn").style.display = currentStep === 0 ? "none" : "block";
+            document.getElementById("draftBtn").style.display = currentStep === 0 ? "none" : "block";
+            document.getElementById("nextBtn").style.display = currentStep === TOTAL_STEPS ? "none" : "block";
+            document.getElementById("submitBtn").style.display = currentStep === TOTAL_STEPS ? "block" : "none";
+        }
+
+        function validateStep(stepIndex) {
+            const stepDiv = document.getElementById(`step${stepIndex}`);
+            if (!stepDiv) return true;
+            
+            if (stepIndex === 0) {
+                const c = document.querySelector('input[name="consent"]:checked');
+                if (!c) { Swal.fire({ icon:'info', title:'กรุณาระบุความยินยอม', confirmButtonColor: '#be123c' }); return false; }
+                if (c.value === 'disagree') return false;
+            }
+
+            let isValid = true;
+            const requiredFields = {
+                1: ['q1', 'q2', 'q3', 'q4'],
+                2: ['q5', 'q6', 'q7', 'q8', 'q9'],
+                3: ['q10', 'q11', 'q12', 'q13', 'q14', 'q15'],
+                4: ['q16', 'q17', 'q18', 'q19', 'q20', 'q21', 'q22', 'q23', 'q24'],
+                5: ['q25', 'q26', 'q27']
+            };
+            const fields = requiredFields[stepIndex] || [];
+
+            for (const f of fields) {
+                let isFieldValid = false;
+                let isOtherSelected = false;
+
+                const select = document.querySelector(`select[name="${f}"]`);
+                if (select) {
+                    if (select.value && select.value !== "") { 
+                        isFieldValid = true; 
+                        if (select.value === "อื่นๆ") isOtherSelected = true;
+                    }
+                } else {
+                    const checked = document.querySelectorAll(`input[name="${f}"]:checked`);
+                    if (checked.length > 0) {
+                        isFieldValid = true;
+                        for (let i = 0; i < checked.length; i++) {
+                            if (checked[i].value === "อื่นๆ") {
+                                isOtherSelected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!isFieldValid) {
+                    isValid = false;
+                } else if (isOtherSelected) {
+                    const otherInput = document.getElementById(`${f}_other`);
+                    if (otherInput && !otherInput.value.trim()) {
+                        isValid = false;
+                    }
+                }
+            }
+
+            if (!isValid) Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณาตอบคำถามที่มีเครื่องหมาย * ให้ครบ', confirmButtonColor: '#be123c' });
+            return isValid;
+        }
+
+        function saveDraft() {
+            const formData = new FormData(document.getElementById('assessmentForm'));
+            const formObj = {};
+            formData.forEach((v, k) => { if(!formObj[k]) formObj[k] = v; else formObj[k] += ',' + v; }); 
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({ step: currentStep, data: formObj }));
+            Swal.fire({ icon: 'success', title: 'บันทึกร่างสำเร็จ', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem(DRAFT_KEY);
+            if (!saved) return;
+            Swal.fire({
+                title: 'พบข้อมูลแบบร่าง', text: 'กู้คืนข้อมูลเดิมหรือไม่?', icon: 'question',
+                showCancelButton: true, confirmButtonText: 'กู้คืน', cancelButtonText: 'เริ่มใหม่',
+                confirmButtonColor: '#be123c'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const savedObj = JSON.parse(saved);
+                    const data = savedObj.data;
+                    currentStep = savedObj.step || 0;
+                    
+                    for (const [k, v] of Object.entries(data)) {
+                        const el = document.getElementsByName(k);
+                        if(el.length && (el[0].type === 'radio' || el[0].type === 'checkbox')) {
+                           v.split(',').forEach(val => {
+                               const match = document.querySelector(`input[name="${k}"][value="${val}"]`);
+                               if(match) match.checked = true;
+                               if(val === 'อื่นๆ') { const ot = document.getElementById(`${k}_other`); if(ot) { ot.disabled = false; ot.classList.remove('bg-brand-50'); } }
+                           });
+                        } else if(el.length) {
+                            el[0].value = v;
+                            if(v === 'อื่นๆ') { const ot = document.getElementById(`${k}_other`); if(ot) { ot.disabled = false; ot.classList.remove('bg-brand-50'); } }
+                            const select = document.querySelector(`select[name="${k}"]`);
+                            if(select && v) {
+                                handleSpecificInput(k, `${k}_other`);
+                            }
+                        }
+                    }
+                    const steps = document.getElementsByClassName("step-content");
+                    steps[0].classList.remove("active");
+                    steps[currentStep].classList.add("active");
+                    updateUI();
+                } else { localStorage.removeItem(DRAFT_KEY); }
+            });
+        }
+
+        function submitForm() {
+            if (!validateStep(TOTAL_STEPS)) return;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
+            const formData = new FormData(document.getElementById('assessmentForm'));
+            const payload = {};
+            for (let [key, val] of formData.entries()) {
+                if (payload[key]) payload[key] += '; ' + val;
+                else payload[key] = val;
+            }
+            payload.submitted_at = new Date().toISOString();
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                localStorage.removeItem(DRAFT_KEY);
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ส่งแบบประเมินเรียบร้อย',
+                    text: 'ขอบคุณสำหรับความร่วมมือ',
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: '#10b981'
+                }).then(() => window.location.reload());
+            }).catch(e => {
+                console.error(e);
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                Swal.fire('Error','เกิดข้อผิดพลาดในการส่งข้อมูล', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
